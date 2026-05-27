@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sepsis and Septic Shock: Advanced Nursing Branching Scenario</title>
+
+<style>
+  :root {
+    --primary: #005a8d;
+    --primary-dark: #003f63;
+    --danger: #9b1c1c;
+    --warning: #b7791f;
+    --success: #207245;
+    --soft-blue: #eef7ff;
+    --soft-red: #fff1f1;
+    --soft-green: #effaf3;
+    --soft-yellow: #fff8e6;
+    --ink: #1f2933;
+    --muted: #5f6b7a;
+    --border: #d8dee9;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f6fa;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  .screen {
+    display: none;
+    min-height: 100vh;
+    padding: 28px;
+    background: #ffffff;
+    overflow-y: auto;
+  }
+
+  .active {
+    display: block;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  h1, h2, h3 {
+    margin-top: 0;
+    line-height: 1.2;
+  }
+
+  h1 {
+    color: var(--primary-dark);
+    font-size: 2rem;
+  }
+
+  h2 {
+    color: var(--primary);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 8px;
+  }
+
+  h3 {
+    color: #26384a;
+    margin-top: 26px;
+  }
+
+  .tag {
+    display: inline-block;
+    background: var(--soft-blue);
+    border: 1px solid #b8dcf5;
+    color: var(--primary-dark);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin: 3px 4px 3px 0;
+    font-weight: bold;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin: 16px 0;
+    box-shadow: 0 2px 8px rgba(31, 41, 51, 0.05);
+  }
+
+  .case-box {
+    background: var(--soft-blue);
+    border-left: 6px solid var(--primary);
+    padding: 18px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+
+  .clinical-pearl {
+    background: var(--soft-yellow);
+    border-left: 6px solid var(--warning);
+    padding: 16px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+
+  .equity-box {
+    background: #f7efff;
+    border-left: 6px solid #6b46c1;
+    padding: 16px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+
+  .danger-box {
+    background: var(--soft-red);
+    border-left: 6px solid var(--danger);
+    padding: 16px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+
+  .success-box {
+    background: var(--soft-green);
+    border-left: 6px solid var(--success);
+    padding: 16px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 780px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .screen {
+      padding: 18px;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.95rem;
+  }
+
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px;
+    vertical-align: top;
+  }
+
+  th {
+    background: #edf2f7;
+    text-align: left;
+  }
+
+  .choice-btn {
+    display: block;
+    width: 100%;
+    padding: 16px 18px;
+    margin: 12px 0;
+    color: white;
+    text-align: left;
+    border-radius: 11px;
+    font-size: 1.03rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+  }
+
+  .choice-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(0.96);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.22);
+  }
+
+  .choice-btn:focus {
+    outline: 3px solid #ffd166;
+    outline-offset: 3px;
+  }
+
+  .choice-btn.secondary,
+  .choice-btn.danger,
+  .choice-btn.good,
+  .choice-btn.warning {
+    background: var(--primary);
+  }
+
+  /* Randomized colour palette for all answer buttons */
+  .color-1 { background: #1976d2 !important; } /* blue */
+  .color-2 { background: #d32f2f !important; } /* red */
+  .color-3 { background: #7b1fa2 !important; } /* purple */
+  .color-4 { background: #f57c00 !important; } /* orange */
+  .color-5 { background: #00897b !important; } /* teal */
+  .color-6 { background: #455a64 !important; } /* blue grey */
+  .color-7 { background: #c2185b !important; } /* pink */
+  .color-8 { background: #388e3c !important; } /* green */
+  .color-9 { background: #5d4037 !important; } /* brown */
+  .color-10 { background: #00695c !important; } /* deep teal */
+
+  .answer-container {
+    margin: 12px 0 20px 0;
+  }
+
+  .answer-container .choice-btn::before {
+    content: "➤ ";
+    font-weight: 900;
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 780px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .dash-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 0.92rem;
+  }
+
+  .meter {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .meter-fill {
+    width: 0%;
+    height: 100%;
+    background: #207245;
+    transition: width 0.2s ease;
+  }
+
+  .button-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+
+  .small-btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+  }
+
+  .small-btn.secondary {
+    background: #596575;
+  }
+
+  .small-btn.danger {
+    background: var(--danger);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 88px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+  }
+
+  label {
+    display: block;
+    margin: 8px 0;
+    cursor: pointer;
+  }
+
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 9px;
+    border-left: 5px solid var(--primary);
+    background: #f7fbff;
+  }
+
+  .feedback.show {
+    display: block;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+    margin-bottom: 18px;
+    z-index: 10;
+  }
+
+  .progress {
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .score {
+    font-weight: bold;
+    color: var(--primary-dark);
+  }
+
+  .restart {
+    margin-top: 30px;
+    display: inline-block;
+    color: var(--primary);
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .pill-list span {
+    display: inline-block;
+    background: #f0f4f8;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 12px;
+    margin: 4px;
+  }
+
+  .note {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<script>
+let score = 0;
+let safetyMisses = 0;
+let phase = "Introduction";
+let awardedItems = new Set();
+
+function updateStatus() {
+  document.querySelectorAll(".scoreDisplay").forEach(el => el.textContent = score);
+  document.querySelectorAll(".missDisplay").forEach(el => el.textContent = safetyMisses);
+  document.querySelectorAll(".phaseDisplay").forEach(el => el.textContent = phase);
+
+  const percent = Math.max(0, Math.min(100, Math.round((score / 155) * 100)));
+  document.querySelectorAll(".meter-fill").forEach(el => el.style.width = percent + "%");
+}
+
+function addScore(points, key) {
+  if (key) {
+    if (awardedItems.has(key)) return;
+    awardedItems.add(key);
+  }
+  score += points;
+  if (score < 0) score = 0;
+  updateStatus();
+}
+
+function addMiss() {
+  safetyMisses += 1;
+  updateStatus();
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function shuffleAnswers(scope) {
+  const root = scope || document;
+  const containers = root.querySelectorAll(".answer-container");
+
+  containers.forEach(container => {
+    const buttons = Array.from(container.children).filter(el => el.classList && el.classList.contains("choice-btn"));
+    if (buttons.length < 2) return;
+
+    shuffleArray(buttons).forEach(button => container.appendChild(button));
+
+    const colourClasses = [
+      "color-1","color-2","color-3","color-4","color-5",
+      "color-6","color-7","color-8","color-9","color-10"
+    ];
+
+    const shuffledColours = shuffleArray([...colourClasses]);
+
+    Array.from(container.children).forEach((btn, index) => {
+      if (!btn.classList || !btn.classList.contains("choice-btn")) return;
+      btn.classList.remove(...colourClasses);
+      btn.classList.add(shuffledColours[index % shuffledColours.length]);
+    });
+  });
+}
+
+function go(screenId, newPhase) {
+  if (newPhase) phase = newPhase;
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const screen = document.getElementById(screenId);
+  screen.classList.add("active");
+  shuffleAnswers(screen);
+  updateStatus();
+  window.scrollTo(0, 0);
+}
+
+function showFeedback(id) {
+  document.getElementById(id).classList.add("show");
+}
+
+function checkMulti(name, correctValues, feedbackId, points) {
+  const checked = [...document.querySelectorAll('input[name="' + name + '"]:checked')].map(x => x.value).sort();
+  const correct = [...correctValues].sort();
+  const ok = checked.length === correct.length && checked.every((v, i) => v === correct[i]);
+  const box = document.getElementById(feedbackId);
+  box.classList.add("show");
+  if (ok) {
+    box.innerHTML = "<strong>Correct.</strong> Your selections match the priority safety actions. " + (points ? "Points awarded." : "");
+    if (points) addScore(points, feedbackId);
+  } else {
+    box.innerHTML = "<strong>Review needed.</strong> Reconsider oxygenation, circulation, infection control, organ dysfunction, and escalation. Look for actions that reduce immediate risk and avoid delays.";
+    addMiss();
+  }
+}
+
+function checkSingle(selected, correct, feedbackId, correctText, incorrectText, points) {
+  const box = document.getElementById(feedbackId);
+  box.classList.add("show");
+  if (selected === correct) {
+    box.innerHTML = "<strong>Correct.</strong> " + correctText;
+    if (points) addScore(points, feedbackId);
+  } else {
+    box.innerHTML = "<strong>Not the safest choice.</strong> " + incorrectText;
+    addMiss();
+  }
+}
+
+function finalScreen() {
+  if (safetyMisses >= 4 || score < 60) {
+    go("endingRemediation", "Debrief");
+  } else if (score >= 115 && safetyMisses <= 1) {
+    go("endingExcellent", "Debrief");
+  } else {
+    go("endingSafe", "Debrief");
+  }
+}
+
+function resetSim() {
+  score = 0;
+  safetyMisses = 0;
+  phase = "Introduction";
+  awardedItems = new Set();
+  document.querySelectorAll(".feedback").forEach(f => f.classList.remove("show"));
+  document.querySelectorAll("input[type='checkbox'], input[type='radio']").forEach(i => i.checked = false);
+  document.querySelectorAll("textarea, input[type='text']").forEach(i => i.value = "");
+  shuffleAnswers(document);
+  go("start", "Introduction");
+}
+
+window.addEventListener("load", () => {
+  shuffleAnswers(document);
+  updateStatus();
+});
+</script>
+</head>
+
+<body>
+
+<!-- START -->
+<div class="screen active" id="start">
+  <div class="container">
+    <div class="topbar">
+      <div class="progress">Phase: <span class="phaseDisplay">Introduction</span> | Score: <span class="scoreDisplay">0</span> | Safety misses: <span class="missDisplay">0</span></div>
+    </div>
+
+    <h1>Sepsis and Septic Shock: Advanced Nursing Branching Scenario</h1>
+    <h2>Case: Thomas K. — Sepsis Secondary to Community-Acquired Pneumonia</h2>
+
+    <div class="case-box">
+      <p><strong>Role:</strong> You are the nurse caring for Thomas as his condition unfolds across the emergency department, ICU, medical unit, and discharge planning.</p>
+      <p><strong>Clinical judgment focus:</strong> Recognize cues, analyze cues, prioritize hypotheses, generate solutions, take action, and evaluate outcomes.</p>
+      <p><strong>Important:</strong> This scenario includes clinical reasoning prompts, branching choices, medication/lab interpretation, SBAR communication, health equity considerations, and discharge teaching.</p><p><strong>Design feature:</strong> Answer buttons are colourful and randomized each time a screen loads, so learners cannot memorize the position of the correct answer.</p>
+    </div>
+
+    <h3>Learning Outcomes</h3>
+    <div class="pill-list">
+      <span>Recognize early sepsis cues</span>
+      <span>Identify septic shock</span>
+      <span>Interpret lactate, urine output, MAP, mentation</span>
+      <span>Prioritize oxygen, antibiotics, fluids, monitoring</span>
+      <span>Use SBAR</span>
+      <span>Assess perfusion across skin tones</span>
+      <span>Apply culturally safe and family-centred care</span>
+      <span>Plan realistic discharge teaching</span>
+    </div>
+
+    <div class="clinical-pearl">
+      <strong>Clinical Pearl: Sepsis is a pattern.</strong>
+      Sepsis is rarely recognized from one finding alone. Look for infection signs plus abnormal vital signs, altered mentation, reduced urine output, elevated lactate, and poor perfusion.
+    </div>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="go('phase1arrival','Phase 1: ED Recognition')">Begin Phase 1: Emergency Department Presentation</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 1 ARRIVAL -->
+<div class="screen" id="phase1arrival">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h1>Phase 1: Emergency Department Presentation</h1>
+    <h2>Early Recognition of Sepsis</h2>
+
+    <div class="case-box">
+      <p>Thomas K. is a 68-year-old Indigenous man who presents to the emergency department with fever, chills, worsening shortness of breath, confusion, and profound weakness.</p>
+      <p>His spouse reports a productive cough with yellow sputum for three days. Over the last 24 hours, he has become increasingly tired, has eaten very little, and has not urinated since early morning.</p>
+      <p>Thomas lives in a rural community approximately 90 minutes from the nearest regional hospital. His spouse explains that he sometimes delays seeking care because travel is difficult and because he has not always felt listened to in healthcare settings.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Subjective Data</h3>
+        <table>
+          <tr><th>Area</th><th>Data</th></tr>
+          <tr><td>Chief concern</td><td>“I feel weak… I can’t catch my breath.”</td></tr>
+          <tr><td>Respiratory</td><td>Productive cough, yellow sputum, shortness of breath, chest discomfort when coughing</td></tr>
+          <tr><td>Hydration/renal</td><td>Poor oral intake; no urine output since early morning</td></tr>
+          <tr><td>Neurologic</td><td>Spouse: “He is not acting like himself.”</td></tr>
+          <tr><td>History</td><td>Type 2 diabetes, COPD, hypertension, prior pneumonia</td></tr>
+          <tr><td>Context</td><td>Rural residence, transportation barriers, previous experiences of not feeling listened to</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Objective Data</h3>
+        <table>
+          <tr><th>Domain</th><th>Findings</th></tr>
+          <tr><td>Vital signs</td><td>BP 86/54, HR 122, RR 28, T 39.1°C, SpO₂ 89% RA</td></tr>
+          <tr><td>Neurologic</td><td>Oriented to person only; slow responses</td></tr>
+          <tr><td>Respiratory</td><td>Crackles right lower lobe; increased work of breathing; productive cough</td></tr>
+          <tr><td>Perfusion</td><td>Weak peripheral pulses; capillary refill &gt; 4 seconds; cool extremities</td></tr>
+          <tr><td>Labs/diagnostics</td><td>WBC 18.5, lactate 4.2, creatinine elevated from baseline, glucose 15.8, RLL infiltrate</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="equity-box">
+      <strong>Equity-informed assessment:</strong> Colour-based cues such as pallor, cyanosis, flushing, or mottling may be subtle or harder to identify in darker skin tones. Assess oral mucosa, conjunctiva, palms, soles, nail beds, skin temperature, capillary refill, peripheral pulses, mental status, urine output, lactate trends, and respiratory effort.
+    </div>
+
+    <h3>Decision 1: First Nursing Priority</h3>
+    <p>Which action is safest first?</p>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct1'); go('phase1cues','Phase 1: ED Recognition')">Apply oxygen, place Thomas on monitoring, and escalate suspected sepsis immediately</button>
+    <button class="choice-btn secondary" onclick="addMiss(); go('phase1oralfluids','Phase 1: ED Recognition')">Encourage oral fluids and reassess in one hour</button>
+    <button class="choice-btn danger" onclick="addMiss(); go('phase1delay','Phase 1: ED Recognition')">Wait for culture results before notifying the provider</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase1oralfluids">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Feedback: Oral Fluids Alone Are Unsafe</h2>
+    <div class="danger-box">
+      <p>Thomas is hypotensive, hypoxemic, newly confused, oliguric, and has an elevated lactate. Oral fluids alone do not address immediate oxygenation, perfusion, infection treatment, or escalation needs.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase1arrival','Phase 1: ED Recognition')">Return to the priority decision</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase1delay">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Feedback: Do Not Delay Antibiotics and Escalation</h2>
+    <div class="danger-box">
+      <p>Blood cultures are important, but cultures should not delay antibiotics when sepsis or septic shock is likely. Thomas already shows organ dysfunction and impaired perfusion.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase1arrival','Phase 1: ED Recognition')">Return to the priority decision</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 1 CUES -->
+<div class="screen" id="phase1cues">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>NCJMM Step 1: Recognize Cues</h2>
+    <p>Select the <strong>five most urgent cues</strong> that indicate Thomas may have sepsis with impaired perfusion or organ dysfunction.</p>
+
+    <div class="card">
+      <label><input type="checkbox" name="phase1urgent" value="bp"> BP 86/54 mmHg</label>
+      <label><input type="checkbox" name="phase1urgent" value="confusion"> New confusion / oriented only to person</label>
+      <label><input type="checkbox" name="phase1urgent" value="lactate"> Lactate 4.2 mmol/L</label>
+      <label><input type="checkbox" name="phase1urgent" value="urine"> No urine output since early morning</label>
+      <label><input type="checkbox" name="phase1urgent" value="spo2"> SpO₂ 89% on room air</label>
+      <label><input type="checkbox" name="phase1urgent" value="yellow"> Yellow sputum</label>
+      <label><input type="checkbox" name="phase1urgent" value="rural"> Lives 90 minutes from hospital</label>
+      <label><input type="checkbox" name="phase1urgent" value="metformin"> Takes metformin</label>
+    </div>
+
+    <button class="small-btn" onclick="checkMulti('phase1urgent',['bp','confusion','lactate','urine','spo2'],'fbUrgent',15)">Check my selections</button>
+    <div class="feedback" id="fbUrgent"></div>
+
+    <h3>Reflection Prompt</h3>
+    <p>Which findings could be missed if the nurse relied only on visible skin colour?</p>
+    <textarea placeholder="Type your reflection here..."></textarea>
+
+    <div class="clinical-pearl">
+      <strong>Family knows baseline.</strong> A spouse saying, “He is not acting like himself,” is clinical data. It may reflect sepsis-associated encephalopathy or impaired cerebral perfusion.
+    </div>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="go('phase1analyze','Phase 1: ED Recognition')">Continue to Analyze Cues</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 1 ANALYZE -->
+<div class="screen" id="phase1analyze">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>NCJMM Step 2: Analyze Cues</h2>
+    <p>Thomas has pneumonia cues, but the concern is broader than pneumonia alone.</p>
+
+    <table>
+      <tr><th>Cue Cluster</th><th>Thomas’s Findings</th><th>Meaning</th></tr>
+      <tr><td>Infection source</td><td>Fever, productive cough, WBC 18.5, RLL infiltrate</td><td>Likely community-acquired pneumonia</td></tr>
+      <tr><td>Respiratory compromise</td><td>RR 28, SpO₂ 89%, crackles, increased work of breathing</td><td>Hypoxemia and impaired gas exchange</td></tr>
+      <tr><td>Impaired perfusion</td><td>BP 86/54, weak pulses, delayed refill, lactate 4.2</td><td>Shock physiology / poor tissue perfusion</td></tr>
+      <tr><td>Organ dysfunction</td><td>New confusion, oliguria, elevated creatinine, hypoxemia</td><td>Infection is affecting organ function</td></tr>
+      <tr><td>Equity/access</td><td>Rural distance, prior not feeling heard, Indigenous patient</td><td>Requires culturally safe, trauma-informed, family-centred communication</td></tr>
+    </table>
+
+    <h3>Decision 2: Most Appropriate Hypothesis</h3>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct2'); go('phase1solutions','Phase 1: ED Recognition')">Sepsis secondary to pneumonia, with concern for progression toward septic shock</button>
+    <button class="choice-btn secondary" onclick="addMiss(); go('phase1anchorCOPD','Phase 1: ED Recognition')">COPD exacerbation only</button>
+    <button class="choice-btn secondary" onclick="addMiss(); go('phase1anchorDehydration','Phase 1: ED Recognition')">Dehydration only due to poor intake</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase1anchorCOPD">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Avoid Anchoring Bias</h2>
+    <div class="danger-box">
+      <p>Thomas has COPD, but “just COPD” does not explain fever, infiltrate, hypotension, elevated lactate, new confusion, and oliguria.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase1analyze','Phase 1: ED Recognition')">Return and reprioritize</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase1anchorDehydration">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Dehydration May Contribute, But It Is Not Enough</h2>
+    <div class="danger-box">
+      <p>Poor intake can worsen hypoperfusion, but dehydration alone does not explain the infection source, hypoxemia, lactate elevation, and acute neurologic change.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase1analyze','Phase 1: ED Recognition')">Return and reprioritize</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 1 SOLUTIONS -->
+<div class="screen" id="phase1solutions">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>NCJMM Step 4: Generate Solutions</h2>
+    <p>Select the <strong>six safest priority actions</strong> for Thomas in the emergency department.</p>
+
+    <div class="card">
+      <label><input type="checkbox" name="phase1actions" value="oxygen"> Apply oxygen and reassess respiratory effort</label>
+      <label><input type="checkbox" name="phase1actions" value="ivs"> Initiate two large-bore IVs</label>
+      <label><input type="checkbox" name="phase1actions" value="cultures"> Obtain blood cultures if this does not delay antibiotics</label>
+      <label><input type="checkbox" name="phase1actions" value="antibiotics"> Administer broad-spectrum IV antibiotics promptly</label>
+      <label><input type="checkbox" name="phase1actions" value="fluids"> Begin ordered IV crystalloid fluid resuscitation with reassessment</label>
+      <label><input type="checkbox" name="phase1actions" value="monitor"> Continuous cardiac/oxygen saturation monitoring and strict intake/output</label>
+      <label><input type="checkbox" name="phase1actions" value="oralonly"> Encourage oral fluids only</label>
+      <label><input type="checkbox" name="phase1actions" value="wait"> Wait for culture results before escalating</label>
+      <label><input type="checkbox" name="phase1actions" value="blame"> Tell the spouse Thomas waited too long to come in</label>
+    </div>
+
+    <button class="small-btn" onclick="checkMulti('phase1actions',['oxygen','ivs','cultures','antibiotics','fluids','monitor'],'fbActions',20)">Check actions</button>
+    <div class="feedback" id="fbActions"></div>
+
+    <div class="clinical-pearl">
+      <strong>Clinical Pearl:</strong> Treat the highest-risk physiology first: oxygenation, circulation, infection control, perfusion, and escalation.
+    </div>
+
+    <h3>Medication Interpretation</h3>
+    <table>
+      <tr><th>Therapy</th><th>Why ordered?</th><th>Priority nursing considerations</th></tr>
+      <tr><td>Oxygen</td><td>Correct hypoxemia and support oxygen delivery</td><td>Trend SpO₂, respiratory effort, work of breathing; do not rely on oximetry alone</td></tr>
+      <tr><td>IV crystalloid bolus</td><td>Improve intravascular volume and perfusion</td><td>Reassess MAP, lung sounds, oxygen need, urine output, mentation, capillary refill</td></tr>
+      <tr><td>Piperacillin-tazobactam</td><td>Broad empiric antimicrobial coverage</td><td>Check allergies, timing, compatibility, renal function, response</td></tr>
+      <tr><td>Vancomycin</td><td>Empiric gram-positive/MRSA coverage when indicated</td><td>Monitor renal function, levels per policy, infusion reaction, IV site</td></tr>
+      <tr><td>Acetaminophen</td><td>Reduce fever and discomfort</td><td>Assess liver risk, total daily dose, fever trend</td></tr>
+      <tr><td>Insulin if ordered</td><td>Manage stress hyperglycemia</td><td>Monitor glucose, potassium, nutrition, hypoglycemia risk</td></tr>
+    </table>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="go('phase1sbar','Phase 1: ED Recognition')">Continue to SBAR and Provider Orders</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 1 SBAR -->
+<div class="screen" id="phase1sbar">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>NCJMM Step 5: Take Action — SBAR</h2>
+    <p>You are calling the emergency physician or rapid response team.</p>
+
+    <div class="grid">
+      <div>
+        <label><strong>S — Situation</strong></label>
+        <textarea placeholder="Example: Thomas is a 68-year-old patient with suspected sepsis..."></textarea>
+      </div>
+      <div>
+        <label><strong>B — Background</strong></label>
+        <textarea placeholder="Include history, symptoms, and context..."></textarea>
+      </div>
+      <div>
+        <label><strong>A — Assessment</strong></label>
+        <textarea placeholder="Include abnormal vitals, lactate, urine output, mentation..."></textarea>
+      </div>
+      <div>
+        <label><strong>R — Recommendation</strong></label>
+        <textarea placeholder="Recommend sepsis bundle actions, escalation, ICU consult if needed..."></textarea>
+      </div>
+    </div>
+
+    <button class="small-btn" onclick="showFeedback('fbSBAR'); addScore(10)">Show sample SBAR</button>
+    <div class="feedback" id="fbSBAR">
+      <strong>Sample SBAR:</strong><br>
+      <strong>S:</strong> Thomas K. is a 68-year-old Indigenous man with suspected sepsis. He is hypotensive, tachycardic, tachypneic, hypoxemic, febrile, and newly confused.<br>
+      <strong>B:</strong> He has diabetes, COPD, hypertension, prior pneumonia, and a three-day productive cough. Chest X-ray shows a right lower lobe infiltrate.<br>
+      <strong>A:</strong> BP 86/54, HR 122, RR 28, SpO₂ 89% RA, lactate 4.2, WBC 18.5, no urine output since early morning, delayed capillary refill.<br>
+      <strong>R:</strong> Recommend urgent sepsis management: oxygen, two large-bore IVs, cultures if not delaying antibiotics, broad-spectrum IV antibiotics, fluid resuscitation, repeat lactate, strict I&O, continuous monitoring, and ICU/rapid response if hypotension persists.
+    </div>
+
+    <h3>Decision 3: Blood Cultures and Antibiotics</h3>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct3'); go('phase1evaluate','Phase 1: ED Recognition')">Draw ordered blood cultures first only if this does not delay antibiotics</button>
+    <button class="choice-btn danger" onclick="addMiss(); go('phase1abxdelay','Phase 1: ED Recognition')">Wait for all diagnostic results before antibiotics</button>
+    <button class="choice-btn secondary" onclick="addMiss(); go('phase1abxdelay','Phase 1: ED Recognition')">Hold antibiotics until sputum culture identifies the organism</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase1abxdelay">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Clinical Safety Feedback</h2>
+    <div class="danger-box">
+      <p>In suspected sepsis or septic shock, antibiotics should not be delayed while waiting for complete diagnostic results. Cultures support targeted therapy later, but unstable physiology requires urgent treatment.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase1sbar','Phase 1: ED Recognition')">Return to antibiotic decision</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 1 EVALUATE -->
+<div class="screen" id="phase1evaluate">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>NCJMM Step 6: Evaluate Outcomes</h2>
+    <p>After oxygen, IV access, cultures, antibiotics, fluid resuscitation, and escalation, which findings would suggest improvement?</p>
+
+    <table>
+      <tr><th>Indicator</th><th>Improving</th><th>Worsening</th></tr>
+      <tr><td>MAP/BP</td><td>MAP improves toward target</td><td>MAP remains low or falls</td></tr>
+      <tr><td>Heart rate</td><td>HR decreases</td><td>HR increases or new dysrhythmia</td></tr>
+      <tr><td>Respiratory status</td><td>Work of breathing and oxygen needs decrease</td><td>Oxygen needs increase, fatigue develops</td></tr>
+      <tr><td>Mental status</td><td>More alert, closer to baseline</td><td>More difficult to rouse</td></tr>
+      <tr><td>Urine output</td><td>Increasing output</td><td>Oliguria persists</td></tr>
+      <tr><td>Lactate</td><td>Trending down</td><td>Rising or persistently high</td></tr>
+      <tr><td>Perfusion</td><td>Improved capillary refill and pulse quality</td><td>Weak pulses, delayed refill, cool extremities</td></tr>
+    </table>
+
+    <div class="clinical-pearl">
+      Evaluation loops back to cue recognition. If Thomas worsens, restart the clinical judgment cycle and escalate.
+    </div>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="go('phase2update','Phase 2: Septic Shock')">Advance to Phase 2: Clinical Deterioration</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 2 UPDATE -->
+<div class="screen" id="phase2update">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h1>Phase 2: Clinical Deterioration</h1>
+    <h2>Septic Shock: ED to ICU</h2>
+
+    <div class="danger-box">
+      <p>Despite oxygen, IV access, cultures, initial IV fluid resuscitation, and broad-spectrum antibiotics, Thomas remains hypotensive. His MAP remains below target, urine output is minimal, and lactate rises from 4.2 to 5.1 mmol/L. He becomes more difficult to rouse and requires increased oxygen support.</p>
+      <p>The provider diagnoses septic shock secondary to community-acquired pneumonia. ICU transfer and norepinephrine are anticipated.</p>
+    </div>
+
+    <table>
+      <tr><th>Assessment Domain</th><th>Phase 1</th><th>Phase 2</th><th>Interpretation</th></tr>
+      <tr><td>BP/MAP</td><td>86/54</td><td>78/46, MAP 57</td><td>Persistent hypotension</td></tr>
+      <tr><td>HR</td><td>122</td><td>132</td><td>Worsening compensation</td></tr>
+      <tr><td>RR</td><td>28</td><td>32</td><td>Increased respiratory distress</td></tr>
+      <tr><td>SpO₂</td><td>89% RA</td><td>91% on 4 L NP</td><td>Higher oxygen need</td></tr>
+      <tr><td>Mental status</td><td>Confused</td><td>Difficult to rouse</td><td>Worsening cerebral perfusion/encephalopathy concern</td></tr>
+      <tr><td>Urine output</td><td>None since morning</td><td>15 mL/hr</td><td>Oliguria / AKI risk</td></tr>
+      <tr><td>Lactate</td><td>4.2</td><td>5.1</td><td>Ongoing shock physiology</td></tr>
+      <tr><td>Family report</td><td>“He is not himself.”</td><td>“He is getting worse.”</td><td>Family confirms deterioration</td></tr>
+    </table>
+
+    <div class="clinical-pearl">
+      <strong>Lactate is a trend.</strong> A lactate rising after treatment suggests ongoing shock physiology or cellular stress.
+    </div>
+
+    <h3>Decision 4: What should the nurse anticipate?</h3>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct4'); go('phase2actions','Phase 2: Septic Shock')">Prepare for ICU transfer and norepinephrine infusion according to order/policy</button>
+    <button class="choice-btn danger" onclick="addMiss(); go('phase2wait','Phase 2: Septic Shock')">Wait several more hours for antibiotics to work before escalating</button>
+    <button class="choice-btn secondary" onclick="addMiss(); go('phase2reduce','Phase 2: Septic Shock')">Reduce monitoring to promote rest</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase2wait">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Unsafe Delay</h2>
+    <div class="danger-box">
+      <p>Persistent hypotension, rising lactate, oliguria, and worsening mental status after initial fluids and antibiotics indicate septic shock. Waiting risks worsening organ dysfunction.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase2update','Phase 2: Septic Shock')">Return to Phase 2 decision</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase2reduce">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Monitoring Cannot Be Reduced</h2>
+    <div class="danger-box">
+      <p>Thomas is unstable. He needs close hemodynamic, respiratory, neurologic, renal, and perfusion monitoring.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase2update','Phase 2: Septic Shock')">Return to Phase 2 decision</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 2 ACTIONS -->
+<div class="screen" id="phase2actions">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>Phase 2: Generate Solutions and Take Action</h2>
+
+    <p>Select the <strong>six highest-priority actions</strong> during deterioration.</p>
+    <div class="card">
+      <label><input type="checkbox" name="phase2priorities" value="icu"> Prepare for ICU transfer</label>
+      <label><input type="checkbox" name="phase2priorities" value="airway"> Continue close airway and breathing assessment</label>
+      <label><input type="checkbox" name="phase2priorities" value="norepi"> Initiate or titrate norepinephrine according to order/policy</label>
+      <label><input type="checkbox" name="phase2priorities" value="map"> Monitor MAP, rhythm, urine output, mentation, lactate, and perfusion</label>
+      <label><input type="checkbox" name="phase2priorities" value="lungs"> Reassess lung sounds and oxygen needs during additional fluid therapy</label>
+      <label><input type="checkbox" name="phase2priorities" value="family"> Provide family with clear, honest, plain-language updates</label>
+      <label><input type="checkbox" name="phase2priorities" value="wait"> Wait several more hours before escalating</label>
+      <label><input type="checkbox" name="phase2priorities" value="rest"> Reduce monitoring to promote rest</label>
+    </div>
+
+    <button class="small-btn" onclick="checkMulti('phase2priorities',['icu','airway','norepi','map','lungs','family'],'fbP2',20)">Check Phase 2 actions</button>
+    <div class="feedback" id="fbP2"></div>
+
+    <div class="clinical-pearl">
+      <strong>Vasopressors support perfusion; they do not treat infection.</strong> Norepinephrine supports vascular tone and MAP. Antibiotics, source control, perfusion support, and reassessment are still required.
+    </div>
+
+    <h3>SBAR to ICU Team</h3>
+    <textarea placeholder="Write your SBAR handoff to ICU here..."></textarea>
+    <button class="small-btn" onclick="showFeedback('fbP2SBAR'); addScore(10)">Show sample ICU SBAR</button>
+    <div class="feedback" id="fbP2SBAR">
+      <strong>Sample SBAR:</strong><br>
+      <strong>S:</strong> Thomas is worsening despite initial sepsis treatment. He remains hypotensive with MAP 57, rising lactate, oliguria, and worsening mental status.<br>
+      <strong>B:</strong> He was admitted with suspected pneumonia-related sepsis and has diabetes, COPD, and hypertension. He has received oxygen, cultures, antibiotics, and IV fluids.<br>
+      <strong>A:</strong> He appears to be progressing to septic shock with impaired perfusion and AKI risk. Lactate has increased to 5.1 and urine output is 15 mL/hr.<br>
+      <strong>R:</strong> Recommend ICU transfer, norepinephrine initiation per order/policy, continued antibiotics, repeat lactate, close respiratory monitoring, and consideration of arterial/central access as clinically indicated.
+    </div>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="go('phase2evaluate','Phase 2: Septic Shock')">Evaluate response to norepinephrine</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase2evaluate">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>Phase 2: Evaluate Outcomes</h2>
+    <p>After norepinephrine is started, which pattern suggests improvement?</p>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct5'); go('phase3update','Phase 3: ICU Management')">MAP reaches target, lactate begins decreasing, urine output improves, mentation improves, and oxygen needs stabilize</button>
+    <button class="choice-btn secondary" onclick="addMiss(); showFeedback('fbP2Eval')">Only the temperature decreases after acetaminophen</button>
+    <button class="choice-btn secondary" onclick="addMiss(); showFeedback('fbP2Eval')">Blood pressure improves briefly, but lactate rises and urine output falls</button>
+    </div>
+
+    <div class="feedback" id="fbP2Eval">
+      A single improving sign is not enough. In septic shock, evaluate MAP, lactate trend, urine output, mentation, oxygen needs, respiratory effort, and perfusion together.
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 3 -->
+<div class="screen" id="phase3update">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h1>Phase 3: ICU Management</h1>
+    <h2>Organ Dysfunction, Cultures, and Antimicrobial Stewardship</h2>
+
+    <div class="case-box">
+      <p>Thomas is admitted to ICU with septic shock. He receives norepinephrine to support MAP, oxygen therapy for hypoxemia, IV antibiotics, ongoing fluid reassessment, glycemic management, and strict intake/output monitoring.</p>
+      <p>Blood cultures later identify <strong>Streptococcus pneumoniae</strong>. Antibiotics are narrowed based on culture and sensitivity results.</p>
+    </div>
+
+    <table>
+      <tr><th>Assessment Domain</th><th>Updated Findings</th><th>Student Interpretation</th></tr>
+      <tr><td>Airway/breathing</td><td>High-flow oxygen; increased secretion burden</td><td>Still at risk for respiratory fatigue</td></tr>
+      <tr><td>Circulation</td><td>MAP maintained with norepinephrine</td><td>Improving but vasopressor-dependent</td></tr>
+      <tr><td>Neurologic</td><td>Fluctuating confusion</td><td>Delirium risk remains</td></tr>
+      <tr><td>Renal</td><td>Foley catheter; urine output improving to 35 mL/hr</td><td>Renal perfusion improving but AKI unresolved</td></tr>
+      <tr><td>Labs</td><td>Lactate trending down from 5.1 to 3.2</td><td>Improving perfusion/cellular stress</td></tr>
+      <tr><td>Cultures</td><td>Blood cultures positive for S. pneumoniae</td><td>Source/pathogen clarification allows narrowing</td></tr>
+      <tr><td>Skin</td><td>Sacral pressure injury risk</td><td>Assess colour, texture, temperature, pain, and pressure areas carefully</td></tr>
+      <tr><td>Family</td><td>Spouse asks for plain-language updates</td><td>Family-centred communication remains part of safety</td></tr>
+    </table>
+
+    <h3>Decision 5: Antibiotic Stewardship</h3>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct6'); go('phase3care','Phase 3: ICU Management')">Collaborate with provider/pharmacy to narrow antibiotics based on culture, sensitivity, and clinical status</button>
+    <button class="choice-btn danger" onclick="addMiss(); go('phase3stopabx','Phase 3: ICU Management')">Discontinue antibiotics because fever has improved</button>
+    <button class="choice-btn secondary" onclick="addMiss(); go('phase3broadforever','Phase 3: ICU Management')">Continue all broad-spectrum antibiotics indefinitely to be safe</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase3stopabx">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Do Not Stop Solely Because Fever Improves</h2>
+    <div class="danger-box">
+      <p>Improved fever does not mean infection is fully treated. Antibiotic decisions require culture data, sensitivity results, clinical status, source control, and prescriber/pharmacy guidance.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase3update','Phase 3: ICU Management')">Return to stewardship decision</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase3broadforever">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h2>Broad-Spectrum Therapy Should Be Reassessed</h2>
+    <div class="danger-box">
+      <p>Broad empiric therapy is appropriate early in shock, but once culture data return, therapy should be narrowed when clinically appropriate to reduce adverse effects, nephrotoxicity, C. difficile risk, and antimicrobial resistance.</p>
+    </div>
+    <div class="answer-container">
+    <button class="choice-btn" onclick="go('phase3update','Phase 3: ICU Management')">Return to stewardship decision</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase3care">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>Phase 3: ICU Nursing Priorities</h2>
+    <p>Select the <strong>seven appropriate ICU care priorities</strong>.</p>
+
+    <div class="card">
+      <label><input type="checkbox" name="phase3priorities" value="map"> Monitor MAP, vasopressor response, rhythm, perfusion, and urine output</label>
+      <label><input type="checkbox" name="phase3priorities" value="resp"> Reassess oxygen needs and respiratory effort frequently</label>
+      <label><input type="checkbox" name="phase3priorities" value="delirium"> Monitor for delirium and support orientation</label>
+      <label><input type="checkbox" name="phase3priorities" value="deescalate"> Collaborate regarding antibiotic de-escalation</label>
+      <label><input type="checkbox" name="phase3priorities" value="labs"> Monitor creatinine, electrolytes, glucose, lactate, and coagulation studies</label>
+      <label><input type="checkbox" name="phase3priorities" value="skin"> Implement pressure injury prevention using assessment strategies appropriate for darker skin tones</label>
+      <label><input type="checkbox" name="phase3priorities" value="family"> Provide family-centred updates using plain language</label>
+      <label><input type="checkbox" name="phase3priorities" value="stop"> Stop antibiotics once fever improves</label>
+      <label><input type="checkbox" name="phase3priorities" value="noorient"> Avoid orientation because delirious patients need quiet only</label>
+    </div>
+
+    <button class="small-btn" onclick="checkMulti('phase3priorities',['map','resp','delirium','deescalate','labs','skin','family'],'fbP3',20)">Check ICU priorities</button>
+    <div class="feedback" id="fbP3"></div>
+
+    <div class="equity-box">
+      <strong>Skin tone and pressure injury risk:</strong> Do not rely only on redness. Assess warmth/coolness, firmness, bogginess, texture change, tenderness, persistent discoloration, and compare sides.
+    </div>
+
+    <h3>Decision 6: Readiness for Medical Unit Transfer</h3>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct7'); go('phase4update','Phase 4: Transfer and Discharge')">No vasopressor requirement, stable MAP, improving urine output/creatinine, lower oxygen need, decreasing lactate, stable mental status, clear antibiotic plan</button>
+    <button class="choice-btn secondary" onclick="addMiss(); showFeedback('fbP3Transfer')">Afebrile for one hour only</button>
+    <button class="choice-btn secondary" onclick="addMiss(); showFeedback('fbP3Transfer')">Family feels reassured only</button>
+    </div>
+    <div class="feedback" id="fbP3Transfer">
+      Readiness for transfer requires physiologic stability, not one isolated sign. Look at hemodynamics, oxygenation, organ function, mental status, and care plan.
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 4 -->
+<div class="screen" id="phase4update">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h1>Phase 4: Stabilization, Medical Unit Transfer, and Discharge Planning</h1>
+
+    <div class="success-box">
+      <p>Thomas’s lactate normalizes, vasopressors are discontinued, oxygen needs decrease, urine output improves, and mental status returns near baseline. He transfers from ICU to the medical unit.</p>
+      <p>He remains weak and fatigued and requires assistance with ambulation. His spouse is fearful of recurrence.</p>
+    </div>
+
+    <table>
+      <tr><th>Assessment Area</th><th>Updated Data</th><th>Interpretation</th></tr>
+      <tr><td>Respiratory</td><td>SpO₂ 94% on 1 L NP; mild exertional dyspnea</td><td>Improving but still needs COPD/respiratory follow-up</td></tr>
+      <tr><td>Neurologic</td><td>Oriented x3; fatigues with long conversations</td><td>Near baseline but post-sepsis fatigue remains</td></tr>
+      <tr><td>Mobility</td><td>Weak, requires walker and assistance</td><td>Falls risk and rehabilitation needs</td></tr>
+      <tr><td>Renal</td><td>Urine output adequate; creatinine improving</td><td>AKI recovering; follow-up labs needed</td></tr>
+      <tr><td>Infection</td><td>Afebrile; antibiotics narrowed</td><td>Complete antibiotic plan and monitoring</td></tr>
+      <tr><td>Access</td><td>Lives 90 minutes from hospital; limited transportation</td><td>Follow-up plan must be realistic</td></tr>
+      <tr><td>Follow-up</td><td>Needs PCP appointment, lab recheck, COPD/diabetes review</td><td>Complex discharge coordination</td></tr>
+    </table>
+
+    <h3>Decision 7: What discharge concerns are highest priority?</h3>
+    <p>Select the <strong>six priority discharge concerns</strong>.</p>
+    <div class="card">
+      <label><input type="checkbox" name="phase4concerns" value="recurrence"> Risk of recurrent infection or sepsis</label>
+      <label><input type="checkbox" name="phase4concerns" value="antibiotic"> Incomplete antibiotic understanding</label>
+      <label><input type="checkbox" name="phase4concerns" value="transport"> Poor follow-up access due to transportation</label>
+      <label><input type="checkbox" name="phase4concerns" value="falls"> Post-sepsis weakness and falls risk</label>
+      <label><input type="checkbox" name="phase4concerns" value="chronic"> Diabetes/COPD destabilization</label>
+      <label><input type="checkbox" name="phase4concerns" value="caregiver"> Spouse anxiety and caregiver burden</label>
+      <label><input type="checkbox" name="phase4concerns" value="appearance"> Whether he looks completely well at discharge</label>
+      <label><input type="checkbox" name="phase4concerns" value="dailyweight"> Daily weight only</label>
+    </div>
+
+    <button class="small-btn" onclick="checkMulti('phase4concerns',['recurrence','antibiotic','transport','falls','chronic','caregiver'],'fbP4Concerns',20)">Check discharge concerns</button>
+    <div class="feedback" id="fbP4Concerns"></div>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="go('phase4teaching','Phase 4: Transfer and Discharge')">Continue to discharge teaching</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="phase4teaching">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h2>Phase 4: Discharge Teaching and Evaluation</h2>
+
+    <div class="clinical-pearl">
+      <strong>Clinical Pearl:</strong> For rural patients, “follow up next week” is not enough unless transportation, appointment access, medication access, and return precautions are clear.
+    </div>
+
+    <h3>Plain-Language Teaching</h3>
+    <table>
+      <tr><th>Teaching Area</th><th>Key Teaching Points</th></tr>
+      <tr><td>Sepsis warning signs</td><td>Confusion, trouble breathing, very weak, shaking chills, fever, no urine, low blood pressure symptoms, feeling suddenly worse</td></tr>
+      <tr><td>Antibiotics</td><td>Take exactly as prescribed; know what to do if doses are missed or side effects occur</td></tr>
+      <tr><td>Respiratory symptoms</td><td>Seek help for increasing shortness of breath, worsening cough, new sputum changes, chest pain, or oxygen concerns</td></tr>
+      <tr><td>Diabetes</td><td>Monitor glucose; infection can raise glucose even with poor appetite; know sick-day plan</td></tr>
+      <tr><td>COPD</td><td>Use inhalers correctly; know when to seek help for worsening breathing</td></tr>
+      <tr><td>Hydration/nutrition</td><td>Encourage fluids/nutrition as tolerated; report poor intake or dehydration signs</td></tr>
+      <tr><td>Follow-up</td><td>Confirm PCP appointment, lab recheck, transportation, medication pick-up, family support</td></tr>
+      <tr><td>Post-sepsis recovery</td><td>Fatigue, weakness, sleep changes, anxiety, or cognitive changes can occur; recovery may take weeks to months</td></tr>
+    </table>
+
+    <h3>Write Three Discharge Instructions</h3>
+    <textarea placeholder="1. If you become confused again, have trouble breathing, stop peeing, feel very weak, or have shaking chills, seek urgent care right away."></textarea>
+    <textarea placeholder="2. Take the antibiotic exactly as prescribed unless your provider changes it."></textarea>
+    <textarea placeholder="3. Before leaving, confirm follow-up, transportation, and where medications will be picked up."></textarea>
+
+    <h3>Decision 8: How will you evaluate understanding?</h3>
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="addScore(10, 'direct8'); go('ngnquestions','NGN Questions')">Use teach-back: ask Thomas and his spouse to explain warning signs, medication plan, follow-up plan, and what they will do if symptoms return</button>
+    <button class="choice-btn secondary" onclick="addMiss(); showFeedback('fbTeachBack')">Ask, “Do you understand?” and discharge if they nod</button>
+    <button class="choice-btn secondary" onclick="addMiss(); showFeedback('fbTeachBack')">Give printed papers only because discharge teaching was already discussed</button>
+    </div>
+
+    <div class="feedback" id="fbTeachBack">
+      Teach-back is stronger than yes/no questions because it verifies understanding and reveals gaps before discharge.
+    </div>
+  </div>
+</div>
+
+<!-- NGN QUESTIONS -->
+<div class="screen" id="ngnquestions">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+
+    <h1>Next Generation NCLEX-Style Debrief Questions</h1>
+
+    <div class="card">
+      <h3>Question 1</h3>
+      <p>Thomas presents with fever, productive cough, BP 86/54, HR 122, RR 28, SpO₂ 89% RA, and new confusion. Which action should the nurse take first?</p>
+    <div class="answer-container">
+      <button class="choice-btn secondary" onclick="checkSingle('A','B','fbQ1','','A is unsafe. Oral fluids alone do not address hypoxemia, shock, or infection.',0)">A. Encourage oral fluids</button>
+      <button class="choice-btn good" onclick="checkSingle('B','B','fbQ1','Apply oxygen and escalate care for suspected sepsis. This prioritizes oxygenation, perfusion, and urgent intervention.','',10)">B. Apply oxygen and escalate care for suspected sepsis</button>
+      <button class="choice-btn secondary" onclick="checkSingle('C','B','fbQ1','','Waiting for cultures delays care.',0)">C. Wait for blood culture results before notifying provider</button>
+      <button class="choice-btn secondary" onclick="checkSingle('D','B','fbQ1','','New confusion is not expected; it may indicate organ dysfunction.',0)">D. Reassure the family confusion is expected with fever</button>
+    </div>
+      <div class="feedback" id="fbQ1"></div>
+    </div>
+
+    <div class="card">
+      <h3>Question 2</h3>
+      <p>Which finding most strongly suggests organ dysfunction in a patient with suspected infection?</p>
+    <div class="answer-container">
+      <button class="choice-btn secondary" onclick="checkSingle('A','B','fbQ2','','Productive cough supports infection source but is not the strongest organ dysfunction cue.',0)">A. Productive cough</button>
+      <button class="choice-btn good" onclick="checkSingle('B','B','fbQ2','New confusion suggests acute neurologic dysfunction and possible impaired cerebral perfusion.','',10)">B. New confusion</button>
+      <button class="choice-btn secondary" onclick="checkSingle('C','B','fbQ2','','Yellow sputum supports infection source but not organ dysfunction alone.',0)">C. Yellow sputum</button>
+      <button class="choice-btn secondary" onclick="checkSingle('D','B','fbQ2','','Mild fatigue is nonspecific.',0)">D. Mild fatigue</button>
+    </div>
+      <div class="feedback" id="fbQ2"></div>
+    </div>
+
+    <div class="card">
+      <h3>Bowtie Question</h3>
+      <p><strong>Most likely condition:</strong></p>
+      <label><input type="radio" name="bowtiecondition" value="copd"> COPD exacerbation only</label>
+      <label><input type="radio" name="bowtiecondition" value="dehydration"> Dehydration without sepsis</label>
+      <label><input type="radio" name="bowtiecondition" value="shock"> Septic shock secondary to pneumonia</label>
+      <label><input type="radio" name="bowtiecondition" value="anxiety"> Anxiety-related dyspnea</label>
+
+      <p><strong>Actions to take — select two:</strong></p>
+      <label><input type="checkbox" name="bowtieactions" value="icu"> Prepare for ICU transfer and vasopressor support</label>
+      <label><input type="checkbox" name="bowtieactions" value="wait"> Wait for cultures before further escalation</label>
+      <label><input type="checkbox" name="bowtieactions" value="monitor"> Continue close respiratory and hemodynamic monitoring</label>
+      <label><input type="checkbox" name="bowtieactions" value="oral"> Encourage oral fluids only</label>
+
+      <p><strong>Parameters to monitor — select two:</strong></p>
+      <label><input type="checkbox" name="bowtiemonitor" value="mapuo"> MAP and urine output</label>
+      <label><input type="checkbox" name="bowtiemonitor" value="hair"> Hair and nail growth</label>
+      <label><input type="checkbox" name="bowtiemonitor" value="lactatemental"> Lactate trend and mental status</label>
+      <label><input type="checkbox" name="bowtiemonitor" value="appetite"> Appetite only</label>
+
+      <button class="small-btn" onclick="
+        let condition = document.querySelector('input[name=bowtiecondition]:checked');
+        let actionChecked = [...document.querySelectorAll('input[name=bowtieactions]:checked')].map(x=>x.value).sort();
+        let monitorChecked = [...document.querySelectorAll('input[name=bowtiemonitor]:checked')].map(x=>x.value).sort();
+        let ok = condition && condition.value==='shock' &&
+          JSON.stringify(actionChecked)===JSON.stringify(['icu','monitor']) &&
+          JSON.stringify(monitorChecked)===JSON.stringify(['lactatemental','mapuo']);
+        let box = document.getElementById('fbBowtie');
+        box.classList.add('show');
+        if(ok){ box.innerHTML='<strong>Correct.</strong> Thomas has septic shock secondary to pneumonia. Priority actions are ICU/vasopressor preparation and close monitoring. Priority parameters include MAP, urine output, lactate trend, and mental status.'; addScore(20, 'direct9'); }
+        else { box.innerHTML='<strong>Review needed.</strong> The full pattern is pneumonia plus hypotension, rising lactate, oliguria, worsening mentation, and increasing oxygen needs. This indicates septic shock.'; addMiss(); }
+      ">Check bowtie item</button>
+      <div class="feedback" id="fbBowtie"></div>
+    </div>
+
+    <div class="answer-container">
+    <button class="choice-btn good" onclick="finalScreen()">Finish Simulation and View Debrief</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENDINGS -->
+<div class="screen" id="endingExcellent">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Final score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h1>Excellent Clinical Judgment Pathway</h1>
+    <div class="success-box">
+      <p>You consistently recognized sepsis as a pattern, escalated early, prioritized oxygenation and perfusion, avoided antibiotic delays, anticipated septic shock treatment, supported antimicrobial stewardship, and created a realistic discharge plan.</p>
+    </div>
+    <h3>Key Takeaways</h3>
+    <ul>
+      <li>Pneumonia plus organ dysfunction is sepsis, not “just pneumonia.”</li>
+      <li>Persistent hypotension, rising lactate, oliguria, and worsening mentation suggest septic shock.</li>
+      <li>Blood cultures are valuable but must not delay antibiotics in likely sepsis or shock.</li>
+      <li>Perfusion assessment must be comprehensive and equitable across skin tones.</li>
+      <li>Discharge teaching must include transportation, follow-up, medication access, warning signs, and teach-back.</li>
+    </ul>
+    <span class="restart" onclick="resetSim()">Restart Simulation</span>
+  </div>
+</div>
+
+<div class="screen" id="endingSafe">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Final score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h1>Safe but Needs Reinforcement</h1>
+    <div class="clinical-pearl">
+      <p>You made several safe clinical decisions, but some parts of the sepsis pathway need reinforcement. Review cue clustering, escalation thresholds, vasopressor indications, and discharge teach-back.</p>
+    </div>
+    <span class="restart" onclick="resetSim()">Restart Simulation</span>
+  </div>
+</div>
+
+<div class="screen" id="endingRemediation">
+  <div class="container">
+    <div class="topbar"><div class="progress">Phase: <span class="phaseDisplay"></span> | Final score: <span class="scoreDisplay"></span> | Safety misses: <span class="missDisplay"></span></div><div class="dashboard"><div class="dash-card">Clinical judgment progress<div class="meter"><div class="meter-fill"></div></div></div><div class="dash-card">Goal: prioritize oxygenation, perfusion, infection control, and escalation</div><div class="dash-card">Answers randomize each screen load</div></div></div>
+    <h1>Remediation Recommended</h1>
+    <div class="danger-box">
+      <p>Several decisions created safety risks, such as delayed escalation, anchoring on COPD/dehydration, delaying antibiotics, or under-monitoring septic shock. Review the clinical judgment sequence and repeat the scenario.</p>
+    </div>
+    <h3>Focus Areas</h3>
+    <ul>
+      <li>Recognize infection plus organ dysfunction.</li>
+      <li>Escalate immediately for hypotension, hypoxemia, lactate elevation, oliguria, or new confusion.</li>
+      <li>Do not delay antibiotics when sepsis or septic shock is likely.</li>
+      <li>Evaluate trends rather than isolated numbers.</li>
+      <li>Use family reports and culturally safe communication as part of clinical safety.</li>
+    </ul>
+    <span class="restart" onclick="resetSim()">Restart Simulation</span>
+  </div>
+</div>
+
+</body>
+</html>
